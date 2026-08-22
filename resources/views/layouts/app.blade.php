@@ -41,6 +41,23 @@
                         <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
                         Dashboard
                     </a>
+                    @if (auth()->user()->hasRole('admin', 'akuntan'))
+                        <a href="{{ route('coa.index') }}"
+                            class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('coa.*') ? 'bg-blue-50 text-primary' : 'text-text hover:bg-slate-50' }}">
+                            <i data-lucide="list-tree" class="w-4 h-4"></i>
+                            Chart of Account
+                        </a>
+                        <a href="{{ route('fiscal-periods.index') }}"
+                            class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('fiscal-periods.*') ? 'bg-blue-50 text-primary' : 'text-text hover:bg-slate-50' }}">
+                            <i data-lucide="calendar-range" class="w-4 h-4"></i>
+                            Periode Akuntansi
+                        </a>
+                        <a href="{{ route('journal.index') }}"
+                            class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('journal.*') ? 'bg-blue-50 text-primary' : 'text-text hover:bg-slate-50' }}">
+                            <i data-lucide="book-text" class="w-4 h-4"></i>
+                            Jurnal Umum
+                        </a>
+                    @endif
                     @yield('nav-extra')
                 </nav>
                 <div class="px-3 py-4 border-t border-slate-200">
@@ -65,12 +82,14 @@
                     <h1 class="text-lg font-semibold text-text">@yield('title', 'Dashboard')</h1>
                 </header>
                 <main class="flex-1 p-6">
+                    @include('components.flash-message')
                     @yield('content')
                 </main>
             </div>
         </div>
     @else
         <main class="min-h-screen flex items-center justify-center px-4">
+            @include('components.flash-message')
             @yield('content')
         </main>
     @endauth
