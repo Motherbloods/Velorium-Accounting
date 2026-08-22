@@ -30,12 +30,14 @@
 
 <body class="bg-background text-text antialiased">
     @auth
-        <div class="flex min-h-screen">
-            <aside class="w-64 bg-white border-r border-slate-200 shadow-sm flex flex-col">
+        <div class="flex h-screen overflow-hidden">
+            <aside class="w-64 shrink-0 bg-white border-r border-slate-200 shadow-sm flex flex-col">
                 <div class="px-6 py-5 border-b border-slate-200">
-                    <span class="text-lg font-semibold text-accent">Sistem Akuntansi</span>
+                    <span class="text-lg font-semibold text-accent">
+                        Sistem Akuntansi
+                    </span>
                 </div>
-                <nav class="flex-1 px-3 py-4 space-y-1">
+                <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
                     <a href="{{ route('dashboard') }}"
                         class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('dashboard') ? 'bg-blue-50 text-primary' : 'text-text hover:bg-slate-50' }}">
                         <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
@@ -60,7 +62,7 @@
                     @endif
                     @yield('nav-extra')
                 </nav>
-                <div class="px-3 py-4 border-t border-slate-200">
+                <div class="px-3 py-4 border-t border-slate-200 shrink-0">
                     <div class="px-3 py-2 text-xs text-slate-500">
                         Masuk sebagai
                         <div class="text-sm font-medium text-text">{{ auth()->user()->name }}</div>
@@ -77,11 +79,13 @@
                     </form>
                 </div>
             </aside>
-            <div class="flex-1 flex flex-col">
-                <header class="h-16 bg-white border-b border-slate-200 shadow-sm flex items-center px-6">
-                    <h1 class="text-lg font-semibold text-text">@yield('title', 'Dashboard')</h1>
+            <div class="flex-1 min-w-0 flex flex-col overflow-hidden">
+                <header class="h-16 shrink-0 bg-white border-b border-slate-200 shadow-sm flex items-center px-6">
+                    <h1 class="text-lg font-semibold text-text">
+                        @yield('title', 'Dashboard')
+                    </h1>
                 </header>
-                <main class="flex-1 p-6">
+                <main class="flex-1 overflow-y-auto p-6">
                     @include('components.flash-message')
                     @yield('content')
                 </main>
