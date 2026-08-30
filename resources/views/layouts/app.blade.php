@@ -37,7 +37,7 @@
                         Sistem Akuntansi
                     </span>
                 </div>
-                <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+                <nav class="flex-1 px-3 py-4 space-y-1">
                     <a href="{{ route('dashboard') }}"
                         class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('dashboard') ? 'bg-blue-50 text-primary' : 'text-text hover:bg-slate-50' }}">
                         <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
@@ -58,6 +58,28 @@
                             class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('journal.*') ? 'bg-blue-50 text-primary' : 'text-text hover:bg-slate-50' }}">
                             <i data-lucide="book-text" class="w-4 h-4"></i>
                             Jurnal Umum
+                        </a>
+
+                        <p class="px-3 pt-4 pb-1 text-xs font-semibold text-slate-400 uppercase">Master Data</p>
+                        <a href="{{ route('customers.index') }}"
+                            class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('customers.*') ? 'bg-blue-50 text-primary' : 'text-text hover:bg-slate-50' }}">
+                            <i data-lucide="users" class="w-4 h-4"></i>
+                            Customer
+                        </a>
+                        <a href="{{ route('suppliers.index') }}"
+                            class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('suppliers.*') ? 'bg-blue-50 text-primary' : 'text-text hover:bg-slate-50' }}">
+                            <i data-lucide="truck" class="w-4 h-4"></i>
+                            Supplier
+                        </a>
+                        <a href="{{ route('products.index') }}"
+                            class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('products.*') ? 'bg-blue-50 text-primary' : 'text-text hover:bg-slate-50' }}">
+                            <i data-lucide="package" class="w-4 h-4"></i>
+                            Produk
+                        </a>
+                        <a href="{{ route('branches.index') }}"
+                            class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('branches.*') ? 'bg-blue-50 text-primary' : 'text-text hover:bg-slate-50' }}">
+                            <i data-lucide="building-2" class="w-4 h-4"></i>
+                            Cabang / Gudang
                         </a>
                     @endif
                     @yield('nav-extra')

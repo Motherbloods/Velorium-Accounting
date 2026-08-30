@@ -2,10 +2,15 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\BranchController;
 use App\Http\Controllers\CoaAccountController;
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FiscalPeriodController;
 use App\Http\Controllers\JournalEntryController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\WarehouseController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
@@ -39,6 +44,19 @@ Route::middleware('auth')->group(function () {
         Route::post('/journal/{journal}/reject', [JournalEntryController::class, 'reject'])->name('journal.reject');
         Route::post('/journal/{journal}/back-to-draft', [JournalEntryController::class, 'backToDraft'])->name('journal.back-to-draft');
         Route::post('/journal/{journal}/post', [JournalEntryController::class, 'post'])->name('journal.post');
+
+        Route::resource('customers', CustomerController::class)->except(['show']);
+        Route::resource('suppliers', SupplierController::class)->except(['show']);
+        Route::resource('products', ProductController::class)->except(['show']);
+
+        Route::get('/branches', [BranchController::class, 'index'])->name('branches.index');
+        Route::post('/branches', [BranchController::class, 'store'])->name('branches.store');
+        Route::put('/branches/{branch}', [BranchController::class, 'update'])->name('branches.update');
+        Route::delete('/branches/{branch}', [BranchController::class, 'destroy'])->name('branches.destroy');
+
+        Route::post('/warehouses', [WarehouseController::class, 'store'])->name('warehouses.store');
+        Route::put('/warehouses/{warehouse}', [WarehouseController::class, 'update'])->name('warehouses.update');
+        Route::delete('/warehouses/{warehouse}', [WarehouseController::class, 'destroy'])->name('warehouses.destroy');
     });
 });
 
