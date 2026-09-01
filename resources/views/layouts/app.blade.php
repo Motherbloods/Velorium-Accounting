@@ -139,6 +139,11 @@
                             <i data-lucide="boxes" class="w-4 h-4"></i>
                             Persediaan
                         </a>
+                        <a href="{{ route('fixed-assets.index') }}"
+                            class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('fixed-assets.*') ? 'bg-blue-50 text-primary' : 'text-text hover:bg-slate-50' }}">
+                            <i data-lucide="building" class="w-4 h-4"></i>
+                            Aset Tetap
+                        </a>
                         <a href="{{ route('branches.index') }}"
                             class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('branches.*') ? 'bg-blue-50 text-primary' : 'text-text hover:bg-slate-50' }}">
                             <i data-lucide="building-2" class="w-4 h-4"></i>

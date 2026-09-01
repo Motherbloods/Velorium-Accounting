@@ -14,6 +14,7 @@ use App\Http\Controllers\ConsignmentShipmentController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FiscalPeriodController;
+use App\Http\Controllers\FixedAssetController;
 use App\Http\Controllers\GeneralLedgerController;
 use App\Http\Controllers\JournalEntryController;
 use App\Http\Controllers\PayableController;
@@ -152,6 +153,13 @@ Route::middleware('auth')->group(function () {
         Route::get('/purchases/{purchase}', [PurchaseController::class, 'show'])->name('purchases.show');
         Route::get('/purchases/{purchase}/return', [PurchaseController::class, 'createReturn'])->name('purchases.return.create');
         Route::post('/purchases/{purchase}/return', [PurchaseController::class, 'storeReturn'])->name('purchases.return.store');
+
+        Route::get('/fixed-assets', [FixedAssetController::class, 'index'])->name('fixed-assets.index');
+        Route::get('/fixed-assets/create', [FixedAssetController::class, 'create'])->name('fixed-assets.create');
+        Route::post('/fixed-assets', [FixedAssetController::class, 'store'])->name('fixed-assets.store');
+        Route::get('/fixed-assets/{fixedAsset}', [FixedAssetController::class, 'show'])->name('fixed-assets.show');
+        Route::post('/fixed-assets/{fixedAsset}/run-depreciation', [FixedAssetController::class, 'runDepreciation'])->name('fixed-assets.run-depreciation');
+        Route::post('/fixed-assets/{fixedAsset}/dispose', [FixedAssetController::class, 'dispose'])->name('fixed-assets.dispose');
     });
 });
 
