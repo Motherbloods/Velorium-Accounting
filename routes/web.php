@@ -2,7 +2,10 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\BankAccountController;
+use App\Http\Controllers\BankReconciliationController;
 use App\Http\Controllers\BranchController;
+use App\Http\Controllers\CashTransactionController;
 use App\Http\Controllers\CoaAccountController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
@@ -30,6 +33,12 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    Route::middleware('role:admin,kasir')->group(function () {
+        Route::get('/cash', [CashTransactionController::class, 'index'])->name('cash.index');
+        Route::get('/cash/create', [CashTransactionController::class, 'create'])->name('cash.create');
+        Route::post('/cash', [CashTransactionController::class, 'store'])->name('cash.store');
+    });
 
     Route::middleware('role:admin,akuntan')->group(function () {
         Route::get('/coa', [CoaAccountController::class, 'index'])->name('coa.index');
@@ -95,6 +104,19 @@ Route::middleware('auth')->group(function () {
         Route::get('/tax/pph', [TaxController::class, 'pphIndex'])->name('tax.pph');
         Route::post('/tax/pph/recognize', [TaxController::class, 'recognizePph'])->name('tax.pph.recognize');
         Route::post('/tax/pph/{pphFinalTransaction}/setor', [TaxController::class, 'setorPph'])->name('tax.pph.setor');
+
+        Route::get('/bank-accounts', [BankAccountController::class, 'index'])->name('bank-accounts.index');
+        Route::get('/bank-accounts/create', [BankAccountController::class, 'create'])->name('bank-accounts.create');
+        Route::post('/bank-accounts', [BankAccountController::class, 'store'])->name('bank-accounts.store');
+
+        Route::get('/bank-reconciliations', [BankReconciliationController::class, 'index'])->name('bank-reconciliations.index');
+        Route::get('/bank-reconciliations/create', [BankReconciliationController::class, 'create'])->name('bank-reconciliations.create');
+        Route::post('/bank-reconciliations', [BankReconciliationController::class, 'store'])->name('bank-reconciliations.store');
+        Route::get('/bank-reconciliations/{bankReconciliation}', [BankReconciliationController::class, 'show'])->name('bank-reconciliations.show');
+        Route::post('/bank-reconciliations/{bankReconciliation}/items', [BankReconciliationController::class, 'addItem'])->name('bank-reconciliations.items.store');
+        Route::post('/bank-reconciliations/items/{item}/post', [BankReconciliationController::class, 'postItem'])->name('bank-reconciliations.items.post');
+        Route::post('/bank-reconciliations/{bankReconciliation}/complete', [BankReconciliationController::class, 'complete'])->name('bank-reconciliations.complete');
+
     });
 });
 
