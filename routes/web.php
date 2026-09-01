@@ -9,7 +9,9 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FiscalPeriodController;
 use App\Http\Controllers\GeneralLedgerController;
 use App\Http\Controllers\JournalEntryController;
+use App\Http\Controllers\PayableController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ReceivableController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\TrialBalanceController;
@@ -67,6 +69,20 @@ Route::middleware('auth')->group(function () {
         Route::get('/stock', [StockController::class, 'index'])->name('stock.index');
         Route::post('/stock/in', [StockController::class, 'adjustIn'])->name('stock.in');
         Route::post('/stock/out', [StockController::class, 'adjustOut'])->name('stock.out');
+
+        Route::get('/receivables', [ReceivableController::class, 'index'])->name('receivables.index');
+        Route::get('/receivables/create', [ReceivableController::class, 'create'])->name('receivables.create');
+        Route::post('/receivables', [ReceivableController::class, 'store'])->name('receivables.store');
+        Route::get('/receivables/aging', [ReceivableController::class, 'aging'])->name('receivables.aging');
+        Route::post('/receivables/aging/record-allowance', [ReceivableController::class, 'recordAllowance'])->name('receivables.record-allowance');
+        Route::get('/receivables/{receivable}', [ReceivableController::class, 'show'])->name('receivables.show');
+        Route::post('/receivables/{receivable}/pay', [ReceivableController::class, 'pay'])->name('receivables.pay');
+
+        Route::get('/payables', [PayableController::class, 'index'])->name('payables.index');
+        Route::get('/payables/create-loan', [PayableController::class, 'createLoan'])->name('payables.create-loan');
+        Route::post('/payables/store-loan', [PayableController::class, 'storeLoan'])->name('payables.store-loan');
+        Route::get('/payables/{payable}', [PayableController::class, 'show'])->name('payables.show');
+        Route::post('/payables/{payable}/pay', [PayableController::class, 'pay'])->name('payables.pay');
     });
 });
 
