@@ -10,6 +10,7 @@ use App\Http\Controllers\FiscalPeriodController;
 use App\Http\Controllers\GeneralLedgerController;
 use App\Http\Controllers\JournalEntryController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\StockController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\TrialBalanceController;
 use App\Http\Controllers\WarehouseController;
@@ -62,6 +63,10 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/reports/general-ledger', [GeneralLedgerController::class, 'index'])->name('reports.general-ledger');
         Route::get('/reports/trial-balance', [TrialBalanceController::class, 'index'])->name('reports.trial-balance');
+
+        Route::get('/stock', [StockController::class, 'index'])->name('stock.index');
+        Route::post('/stock/in', [StockController::class, 'adjustIn'])->name('stock.in');
+        Route::post('/stock/out', [StockController::class, 'adjustOut'])->name('stock.out');
     });
 });
 
