@@ -79,6 +79,17 @@
                             Hutang
                         </a>
 
+                        <a href="{{ route('sales.index') }}"
+                            class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('sales.*') ? 'bg-blue-50 text-primary' : 'text-text hover:bg-slate-50' }}">
+                            <i data-lucide="shopping-cart" class="w-4 h-4"></i>
+                            Penjualan
+                        </a>
+                        <a href="{{ route('purchases.index') }}"
+                            class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('purchases.*') ? 'bg-blue-50 text-primary' : 'text-text hover:bg-slate-50' }}">
+                            <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+                            Pembelian
+                        </a>
+
                         <a href="{{ route('tax.ppn') }}"
                             class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('tax.ppn') ? 'bg-blue-50 text-primary' : 'text-text hover:bg-slate-50' }}">
                             <i data-lucide="receipt" class="w-4 h-4"></i>
