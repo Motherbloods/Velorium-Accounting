@@ -59,6 +59,7 @@ class ReceivableController extends Controller
             'tanggal_bayar' => ['required', 'date'],
             'jumlah_bayar' => ['required', 'numeric', 'min:0.01'],
             'coa_kas_bank_id' => ['required', 'exists:coa_accounts,id'],
+            'terapkan_diskon_tunai' => ['nullable', 'boolean'],
         ]);
 
         $this->receivableService->pay($receivable, $data, $request->user());

@@ -62,6 +62,7 @@ class PayableController extends Controller
             'jumlah_pokok' => ['required', 'numeric', 'min:0.01'],
             'jumlah_bunga' => ['nullable', 'numeric', 'min:0'],
             'coa_kas_bank_id' => ['required', 'exists:coa_accounts,id'],
+            'terapkan_diskon_tunai' => ['nullable', 'boolean'],
         ]);
 
         $this->payableService->pay($payable, $data, $request->user());
