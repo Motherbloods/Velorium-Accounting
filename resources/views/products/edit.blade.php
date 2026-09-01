@@ -40,6 +40,22 @@
                         class="w-full px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary">
                 </div>
             </div>
+            <div>
+                <label class="block text-sm font-medium text-text mb-1">Metode Penilaian Persediaan</label>
+                @if ($metodeTerkunci)
+                    <input type="hidden" name="metode_penilaian" value="{{ $product->metode_penilaian }}">
+                    <input type="text"
+                        value="{{ $product->metode_penilaian === 'fifo' ? 'FIFO' : 'Rata-rata Tertimbang' }}" disabled
+                        class="w-full px-3 py-2 rounded-lg border border-slate-200 bg-slate-50 text-slate-400">
+                    <p class="text-xs text-error mt-1">Terkunci — produk sudah memiliki transaksi persediaan.</p>
+                @else
+                    <select name="metode_penilaian" required
+                        class="w-full px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary">
+                        <option value="rata_rata" @selected(old('metode_penilaian', $product->metode_penilaian) === 'rata_rata')>Rata-rata Tertimbang</option>
+                        <option value="fifo" @selected(old('metode_penilaian', $product->metode_penilaian) === 'fifo')>FIFO</option>
+                    </select>
+                @endif
+            </div>
             <div class="flex gap-3">
                 <button type="submit"
                     class="px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium shadow-sm hover:bg-accent">

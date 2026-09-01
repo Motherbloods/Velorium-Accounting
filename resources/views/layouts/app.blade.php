@@ -76,6 +76,11 @@
                             <i data-lucide="package" class="w-4 h-4"></i>
                             Produk
                         </a>
+                        <a href="{{ route('stock.index') }}"
+                            class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('stock.*') ? 'bg-blue-50 text-primary' : 'text-text hover:bg-slate-50' }}">
+                            <i data-lucide="boxes" class="w-4 h-4"></i>
+                            Persediaan
+                        </a>
                         <a href="{{ route('branches.index') }}"
                             class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('branches.*') ? 'bg-blue-50 text-primary' : 'text-text hover:bg-slate-50' }}">
                             <i data-lucide="building-2" class="w-4 h-4"></i>
