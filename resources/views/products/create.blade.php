@@ -39,6 +39,16 @@
                         class="w-full px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary">
                 </div>
             </div>
+            <div>
+                <label class="block text-sm font-medium text-text mb-1">Metode Penilaian Persediaan</label>
+                <select name="metode_penilaian" required
+                    class="w-full px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary">
+                    <option value="rata_rata" @selected(old('metode_penilaian') === 'rata_rata')>Rata-rata Tertimbang</option>
+                    <option value="fifo" @selected(old('metode_penilaian') === 'fifo')>FIFO</option>
+                </select>
+                <p class="text-xs text-slate-400 mt-1">Metode ini akan terkunci setelah produk memiliki transaksi
+                    persediaan.</p>
+            </div>
             <div class="flex gap-3">
                 <button type="submit"
                     class="px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium shadow-sm hover:bg-accent">
