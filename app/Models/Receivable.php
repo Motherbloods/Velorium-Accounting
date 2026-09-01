@@ -13,6 +13,8 @@ class Receivable extends Model
         'customer_id',
         'tanggal',
         'tanggal_jatuh_tempo',
+        'termin_diskon_persen',
+        'termin_diskon_hari',
         'total_tagihan',
         'sisa_piutang',
         'status',
@@ -38,11 +40,6 @@ class Receivable extends Model
     public function payments(): HasMany
     {
         return $this->hasMany(ReceivablePayment::class);
-    }
-
-    public function umurHari(): int
-    {
-        return max(0, now()->startOfDay()->diffInDays($this->tanggal_jatuh_tempo->startOfDay(), false) * -1);
     }
 
     public function isOverdue(): bool

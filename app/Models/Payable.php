@@ -13,6 +13,8 @@ class Payable extends Model
         'supplier_id',
         'tanggal',
         'tanggal_jatuh_tempo',
+        'termin_diskon_persen',
+        'termin_diskon_hari',
         'jenis',
         'tarif_bunga_tahunan',
         'total_hutang',
