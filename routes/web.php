@@ -14,7 +14,9 @@ use App\Http\Controllers\GeneralLedgerController;
 use App\Http\Controllers\JournalEntryController;
 use App\Http\Controllers\PayableController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\ReceivableController;
+use App\Http\Controllers\SaleController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\TaxController;
@@ -117,6 +119,19 @@ Route::middleware('auth')->group(function () {
         Route::post('/bank-reconciliations/items/{item}/post', [BankReconciliationController::class, 'postItem'])->name('bank-reconciliations.items.post');
         Route::post('/bank-reconciliations/{bankReconciliation}/complete', [BankReconciliationController::class, 'complete'])->name('bank-reconciliations.complete');
 
+        Route::get('/sales', [SaleController::class, 'index'])->name('sales.index');
+        Route::get('/sales/create', [SaleController::class, 'create'])->name('sales.create');
+        Route::post('/sales', [SaleController::class, 'store'])->name('sales.store');
+        Route::get('/sales/{sale}', [SaleController::class, 'show'])->name('sales.show');
+        Route::get('/sales/{sale}/return', [SaleController::class, 'createReturn'])->name('sales.return.create');
+        Route::post('/sales/{sale}/return', [SaleController::class, 'storeReturn'])->name('sales.return.store');
+
+        Route::get('/purchases', [PurchaseController::class, 'index'])->name('purchases.index');
+        Route::get('/purchases/create', [PurchaseController::class, 'create'])->name('purchases.create');
+        Route::post('/purchases', [PurchaseController::class, 'store'])->name('purchases.store');
+        Route::get('/purchases/{purchase}', [PurchaseController::class, 'show'])->name('purchases.show');
+        Route::get('/purchases/{purchase}/return', [PurchaseController::class, 'createReturn'])->name('purchases.return.create');
+        Route::post('/purchases/{purchase}/return', [PurchaseController::class, 'storeReturn'])->name('purchases.return.store');
     });
 });
 
