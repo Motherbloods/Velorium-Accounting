@@ -43,6 +43,14 @@
                         <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
                         Dashboard
                     </a>
+
+                    @if (auth()->user()->hasRole('admin', 'kasir'))
+                        <a href="{{ route('cash.index') }}"
+                            class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('cash.*') ? 'bg-blue-50 text-primary' : 'text-text hover:bg-slate-50' }}">
+                            <i data-lucide="wallet" class="w-4 h-4"></i>
+                            Kas & Bank
+                        </a>
+                    @endif
                     @if (auth()->user()->hasRole('admin', 'akuntan'))
                         <a href="{{ route('coa.index') }}"
                             class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('coa.*') ? 'bg-blue-50 text-primary' : 'text-text hover:bg-slate-50' }}">
@@ -81,6 +89,18 @@
                             <i data-lucide="file-text" class="w-4 h-4"></i>
                             PPh Final
                         </a>
+
+                        <a href="{{ route('bank-accounts.index') }}"
+                            class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('bank-accounts.*') ? 'bg-blue-50 text-primary' : 'text-text hover:bg-slate-50' }}">
+                            <i data-lucide="credit-card" class="w-4 h-4"></i>
+                            Rekening Bank
+                        </a>
+                        <a href="{{ route('bank-reconciliations.index') }}"
+                            class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('bank-reconciliations.*') ? 'bg-blue-50 text-primary' : 'text-text hover:bg-slate-50' }}">
+                            <i data-lucide="git-compare" class="w-4 h-4"></i>
+                            Rekonsiliasi Bank
+                        </a>
+
                         <a href="{{ route('tax.settings') }}"
                             class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('tax.settings') ? 'bg-blue-50 text-primary' : 'text-text hover:bg-slate-50' }}">
                             <i data-lucide="settings-2" class="w-4 h-4"></i>
