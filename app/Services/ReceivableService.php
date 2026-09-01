@@ -10,8 +10,10 @@ use Illuminate\Support\Facades\DB;
 
 class ReceivableService
 {
-    public function __construct(protected JournalService $journalService)
-    {
+    public function __construct(
+        protected JournalService $journalService,
+        protected DiscountService $discountService
+    ) {
     }
 
     public function create(array $data): Receivable
@@ -23,6 +25,8 @@ class ReceivableService
             'customer_id' => $data['customer_id'],
             'tanggal' => $data['tanggal'],
             'tanggal_jatuh_tempo' => date('Y-m-d', strtotime($data['tanggal'] . " +{$terminHari} days")),
+            'termin_diskon_persen' => $data['termin_diskon_persen'] ?? null,
+            'termin_diskon_hari' => $data['termin_diskon_hari'] ?? null,
             'total_tagihan' => $data['total_tagihan'],
             'sisa_piutang' => $data['total_tagihan'],
             'status' => 'belum_lunas',
@@ -33,15 +37,50 @@ class ReceivableService
         ]);
     }
 
-    public function pay(Receivable $receivable, array $data, User $user): ReceivablePayment
+    public function isEligibleForCashDiscount(Receivable $receivable, string $tanggalBayar): bool
     {
-        if ($data['jumlah_bayar'] > $receivable->sisa_piutang) {
-            abort(422, 'Jumlah bayar melebihi sisa piutang.');
+        if (!$receivable->termin_diskon_persen || !$receivable->termin_diskon_hari) {
+            return false;
         }
 
-        return DB::transaction(function () use ($receivable, $data, $user) {
+        return $this->discountService->isDalamMasaTermin(
+            $receivable->tanggal->toDateString(),
+            $tanggalBayar,
+            $receivable->termin_diskon_hari
+        );
+    }
+
+    public function pay(Receivable $receivable, array $data, User $user): ReceivablePayment
+    {
+        $jumlahBayar = (string) $data['jumlah_bayar'];
+        $terapkanDiskon = !empty($data['terapkan_diskon_tunai']) && $this->isEligibleForCashDiscount($receivable, $data['tanggal_bayar']);
+
+        $diskon = '0';
+
+        if ($terapkanDiskon) {
+            $diskon = $this->discountService->jumlahDiskonTunai($jumlahBayar, (string) $receivable->termin_diskon_persen);
+        }
+
+        $totalPengurangPiutang = bcadd($jumlahBayar, $diskon, 2);
+
+        if (bccomp($totalPengurangPiutang, (string) $receivable->sisa_piutang, 2) > 0) {
+            abort(422, 'Jumlah bayar ditambah diskon melebihi sisa piutang.');
+        }
+
+        return DB::transaction(function () use ($receivable, $data, $jumlahBayar, $diskon, $totalPengurangPiutang, $user) {
             $coaKasBank = CoaAccount::findOrFail($data['coa_kas_bank_id']);
             $coaPiutang = CoaAccount::where('kode_akun', '113')->firstOrFail();
+
+            $lines = [
+                ['coa_account_id' => $coaKasBank->id, 'debit' => $jumlahBayar, 'kredit' => 0],
+            ];
+
+            if (bccomp($diskon, '0', 2) > 0) {
+                $coaPotongan = CoaAccount::where('kode_akun', '412')->firstOrFail();
+                $lines[] = ['coa_account_id' => $coaPotongan->id, 'debit' => $diskon, 'kredit' => 0];
+            }
+
+            $lines[] = ['coa_account_id' => $coaPiutang->id, 'debit' => 0, 'kredit' => $totalPengurangPiutang];
 
             $entry = $this->journalService->create([
                 'tanggal' => $data['tanggal_bayar'],
@@ -49,20 +88,17 @@ class ReceivableService
                 'referensi_type' => Receivable::class,
                 'referensi_id' => $receivable->id,
                 'created_by' => $user->id,
-            ], [
-                ['coa_account_id' => $coaKasBank->id, 'debit' => $data['jumlah_bayar'], 'kredit' => 0],
-                ['coa_account_id' => $coaPiutang->id, 'debit' => 0, 'kredit' => $data['jumlah_bayar']],
-            ]);
+            ], $lines);
 
             $payment = ReceivablePayment::create([
                 'receivable_id' => $receivable->id,
                 'tanggal_bayar' => $data['tanggal_bayar'],
-                'jumlah_bayar' => $data['jumlah_bayar'],
+                'jumlah_bayar' => $jumlahBayar,
                 'coa_kas_bank_id' => $coaKasBank->id,
                 'journal_entry_id' => $entry->id,
             ]);
 
-            $sisaBaru = bcsub((string) $receivable->sisa_piutang, (string) $data['jumlah_bayar'], 2);
+            $sisaBaru = bcsub((string) $receivable->sisa_piutang, $totalPengurangPiutang, 2);
 
             $receivable->update([
                 'sisa_piutang' => $sisaBaru,

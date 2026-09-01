@@ -150,6 +150,8 @@ class SaleService
                     'tanggal' => $data['tanggal'],
                     'total_tagihan' => $total,
                     'termin_jatuh_tempo_hari' => $data['termin_jatuh_tempo_hari'] ?? 30,
+                    'termin_diskon_persen' => $data['termin_diskon_persen'] ?? null,
+                    'termin_diskon_hari' => $data['termin_diskon_hari'] ?? null,
                     'referensi_type' => Sale::class,
                     'referensi_id' => $sale->id,
                     'journal_entry_id' => $entry->id,
