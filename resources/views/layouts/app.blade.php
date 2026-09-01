@@ -71,6 +71,22 @@
                             Hutang
                         </a>
 
+                        <a href="{{ route('tax.ppn') }}"
+                            class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('tax.ppn') ? 'bg-blue-50 text-primary' : 'text-text hover:bg-slate-50' }}">
+                            <i data-lucide="receipt" class="w-4 h-4"></i>
+                            PPN
+                        </a>
+                        <a href="{{ route('tax.pph') }}"
+                            class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('tax.pph') ? 'bg-blue-50 text-primary' : 'text-text hover:bg-slate-50' }}">
+                            <i data-lucide="file-text" class="w-4 h-4"></i>
+                            PPh Final
+                        </a>
+                        <a href="{{ route('tax.settings') }}"
+                            class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('tax.settings') ? 'bg-blue-50 text-primary' : 'text-text hover:bg-slate-50' }}">
+                            <i data-lucide="settings-2" class="w-4 h-4"></i>
+                            Pengaturan Pajak
+                        </a>
+
                         <p class="px-3 pt-4 pb-1 text-xs font-semibold text-slate-400 uppercase">Master Data</p>
                         <a href="{{ route('customers.index') }}"
                             class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('customers.*') ? 'bg-blue-50 text-primary' : 'text-text hover:bg-slate-50' }}">

@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             CoaAccountSeeder::class,
+            TaxSettingSeeder::class,
         ]);
 
         $branch = Branch::create([

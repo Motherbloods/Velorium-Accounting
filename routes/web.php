@@ -14,6 +14,8 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ReceivableController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\TaxController;
+use App\Http\Controllers\TaxSettingController;
 use App\Http\Controllers\TrialBalanceController;
 use App\Http\Controllers\WarehouseController;
 use Illuminate\Support\Facades\Route;
@@ -83,6 +85,16 @@ Route::middleware('auth')->group(function () {
         Route::post('/payables/store-loan', [PayableController::class, 'storeLoan'])->name('payables.store-loan');
         Route::get('/payables/{payable}', [PayableController::class, 'show'])->name('payables.show');
         Route::post('/payables/{payable}/pay', [PayableController::class, 'pay'])->name('payables.pay');
+
+        Route::get('/tax/settings', [TaxSettingController::class, 'index'])->name('tax.settings');
+        Route::post('/tax/settings', [TaxSettingController::class, 'store'])->name('tax.settings.store');
+
+        Route::get('/tax/ppn', [TaxController::class, 'ppnIndex'])->name('tax.ppn');
+        Route::post('/tax/ppn/setor', [TaxController::class, 'setorPpn'])->name('tax.ppn.setor');
+
+        Route::get('/tax/pph', [TaxController::class, 'pphIndex'])->name('tax.pph');
+        Route::post('/tax/pph/recognize', [TaxController::class, 'recognizePph'])->name('tax.pph.recognize');
+        Route::post('/tax/pph/{pphFinalTransaction}/setor', [TaxController::class, 'setorPph'])->name('tax.pph.setor');
     });
 });
 
