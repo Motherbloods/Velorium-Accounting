@@ -81,6 +81,18 @@
                             <i data-lucide="building-2" class="w-4 h-4"></i>
                             Cabang / Gudang
                         </a>
+
+                        <p class="px-3 pt-4 pb-1 text-xs font-semibold text-slate-400 uppercase">Laporan</p>
+                        <a href="{{ route('reports.general-ledger') }}"
+                            class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('reports.general-ledger') ? 'bg-blue-50 text-primary' : 'text-text hover:bg-slate-50' }}">
+                            <i data-lucide="book-open" class="w-4 h-4"></i>
+                            Buku Besar
+                        </a>
+                        <a href="{{ route('reports.trial-balance') }}"
+                            class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('reports.trial-balance') ? 'bg-blue-50 text-primary' : 'text-text hover:bg-slate-50' }}">
+                            <i data-lucide="scale" class="w-4 h-4"></i>
+                            Neraca Saldo
+                        </a>
                     @endif
                     @yield('nav-extra')
                 </nav>

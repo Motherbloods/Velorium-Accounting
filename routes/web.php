@@ -7,9 +7,11 @@ use App\Http\Controllers\CoaAccountController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FiscalPeriodController;
+use App\Http\Controllers\GeneralLedgerController;
 use App\Http\Controllers\JournalEntryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\TrialBalanceController;
 use App\Http\Controllers\WarehouseController;
 use Illuminate\Support\Facades\Route;
 
@@ -57,6 +59,9 @@ Route::middleware('auth')->group(function () {
         Route::post('/warehouses', [WarehouseController::class, 'store'])->name('warehouses.store');
         Route::put('/warehouses/{warehouse}', [WarehouseController::class, 'update'])->name('warehouses.update');
         Route::delete('/warehouses/{warehouse}', [WarehouseController::class, 'destroy'])->name('warehouses.destroy');
+
+        Route::get('/reports/general-ledger', [GeneralLedgerController::class, 'index'])->name('reports.general-ledger');
+        Route::get('/reports/trial-balance', [TrialBalanceController::class, 'index'])->name('reports.trial-balance');
     });
 });
 
