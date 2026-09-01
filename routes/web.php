@@ -7,6 +7,10 @@ use App\Http\Controllers\BankReconciliationController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\CashTransactionController;
 use App\Http\Controllers\CoaAccountController;
+use App\Http\Controllers\ConsigneeController;
+use App\Http\Controllers\ConsignmentReturnController;
+use App\Http\Controllers\ConsignmentSalesReportController;
+use App\Http\Controllers\ConsignmentShipmentController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FiscalPeriodController;
@@ -35,6 +39,22 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    Route::middleware('role:admin,staff_konsinyasi')->group(function () {
+        Route::get('/consignees', [ConsigneeController::class, 'index'])->name('consignees.index');
+        Route::post('/consignees', [ConsigneeController::class, 'store'])->name('consignees.store');
+
+        Route::get('/consignment/shipments', [ConsignmentShipmentController::class, 'index'])->name('consignment.shipments.index');
+        Route::get('/consignment/shipments/create', [ConsignmentShipmentController::class, 'create'])->name('consignment.shipments.create');
+        Route::post('/consignment/shipments', [ConsignmentShipmentController::class, 'store'])->name('consignment.shipments.store');
+        Route::get('/consignment/shipments/{shipment}', [ConsignmentShipmentController::class, 'show'])->name('consignment.shipments.show');
+
+        Route::get('/consignment/shipments/{shipment}/sales-report', [ConsignmentSalesReportController::class, 'create'])->name('consignment.sales-reports.create');
+        Route::post('/consignment/shipments/{shipment}/sales-report', [ConsignmentSalesReportController::class, 'store'])->name('consignment.sales-reports.store');
+
+        Route::get('/consignment/shipments/{shipment}/return', [ConsignmentReturnController::class, 'create'])->name('consignment.returns.create');
+        Route::post('/consignment/shipments/{shipment}/return', [ConsignmentReturnController::class, 'store'])->name('consignment.returns.store');
+    });
 
     Route::middleware('role:admin,kasir')->group(function () {
         Route::get('/cash', [CashTransactionController::class, 'index'])->name('cash.index');
