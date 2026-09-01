@@ -18,6 +18,8 @@ class Purchase extends Model
         'dpp_ppn',
         'ppn',
         'total',
+        'termin_diskon_persen',
+        'termin_diskon_hari',
         'coa_pembayaran_id',
         'journal_entry_id',
         'payable_id',

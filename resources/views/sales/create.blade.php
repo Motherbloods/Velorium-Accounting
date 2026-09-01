@@ -63,6 +63,20 @@
                     class="w-full px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary">
             </div>
 
+            <div x-show="tipe === 'kredit'" class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-text mb-1">Diskon Tunai (%)</label>
+                    <input type="number" step="0.01" min="0" max="100" name="termin_diskon_persen"
+                        placeholder="Contoh: 2"
+                        class="w-full px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-text mb-1">Berlaku Jika Dibayar Dalam (hari)</label>
+                    <input type="number" min="1" name="termin_diskon_hari" placeholder="Contoh: 10"
+                        class="w-full px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary">
+                </div>
+            </div>
+
             <div>
                 <div class="flex items-center justify-between mb-2">
                     <label class="text-sm font-medium text-text">Item Produk</label>

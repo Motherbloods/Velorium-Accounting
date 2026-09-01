@@ -46,6 +46,8 @@ class PurchaseController extends Controller
             'kena_ppn' => ['nullable', 'boolean'],
             'coa_kas_bank_id' => ['required_if:tipe,tunai', 'nullable', 'exists:coa_accounts,id'],
             'termin_jatuh_tempo_hari' => ['nullable', 'integer', 'min:1'],
+            'termin_diskon_persen' => ['nullable', 'numeric', 'min:0', 'max:100'],
+            'termin_diskon_hari' => ['nullable', 'integer', 'min:1'],
             'items' => ['required', 'array', 'min:1'],
             'items.*.product_id' => ['required', 'exists:products,id'],
             'items.*.qty' => ['required', 'integer', 'min:1'],

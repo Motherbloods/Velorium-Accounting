@@ -10,8 +10,10 @@ use Illuminate\Support\Facades\DB;
 
 class PayableService
 {
-    public function __construct(protected JournalService $journalService)
-    {
+    public function __construct(
+        protected JournalService $journalService,
+        protected DiscountService $discountService
+    ) {
     }
 
     public function create(array $data): Payable
@@ -27,6 +29,8 @@ class PayableService
             'supplier_id' => $data['supplier_id'] ?? null,
             'tanggal' => $data['tanggal'],
             'tanggal_jatuh_tempo' => $tanggalJatuhTempo,
+            'termin_diskon_persen' => $data['termin_diskon_persen'] ?? null,
+            'termin_diskon_hari' => $data['termin_diskon_hari'] ?? null,
             'jenis' => $data['jenis'],
             'tarif_bunga_tahunan' => $data['tarif_bunga_tahunan'] ?? null,
             'total_hutang' => $data['total_hutang'],
@@ -67,34 +71,61 @@ class PayableService
         });
     }
 
+    public function isEligibleForCashDiscount(Payable $payable, string $tanggalBayar): bool
+    {
+        if (!$payable->termin_diskon_persen || !$payable->termin_diskon_hari) {
+            return false;
+        }
+
+        return $this->discountService->isDalamMasaTermin(
+            $payable->tanggal->toDateString(),
+            $tanggalBayar,
+            $payable->termin_diskon_hari
+        );
+    }
+
     public function pay(Payable $payable, array $data, User $user): PayablePayment
     {
         $jumlahPokok = (string) $data['jumlah_pokok'];
         $jumlahBunga = (string) ($data['jumlah_bunga'] ?? 0);
+        $terapkanDiskon = !empty($data['terapkan_diskon_tunai']) && $this->isEligibleForCashDiscount($payable, $data['tanggal_bayar']);
 
-        if (bccomp($jumlahPokok, (string) $payable->sisa_hutang, 2) > 0) {
-            abort(422, 'Jumlah pokok melebihi sisa hutang.');
+        $diskon = '0';
+
+        if ($terapkanDiskon) {
+            $diskon = $this->discountService->jumlahDiskonTunai($jumlahPokok, (string) $payable->termin_diskon_persen);
         }
 
-        return DB::transaction(function () use ($payable, $data, $jumlahPokok, $jumlahBunga, $user) {
+        $totalPengurangHutang = bcadd($jumlahPokok, $diskon, 2);
+
+        if (bccomp($totalPengurangHutang, (string) $payable->sisa_hutang, 2) > 0) {
+            abort(422, 'Jumlah pokok ditambah diskon melebihi sisa hutang.');
+        }
+
+        return DB::transaction(function () use ($payable, $data, $jumlahPokok, $jumlahBunga, $diskon, $totalPengurangHutang, $user) {
             $coaKasBank = CoaAccount::findOrFail($data['coa_kas_bank_id']);
             $coaHutang = $payable->jenis === 'pinjaman'
                 ? CoaAccount::where('kode_akun', $payable->klasifikasi() === 'jangka_panjang' ? '221' : '214')->firstOrFail()
                 : CoaAccount::where('kode_akun', '211')->firstOrFail();
 
             $lines = [
-                ['coa_account_id' => $coaHutang->id, 'debit' => $jumlahPokok, 'kredit' => 0],
+                ['coa_account_id' => $coaHutang->id, 'debit' => $totalPengurangHutang, 'kredit' => 0],
             ];
 
-            $totalBayar = $jumlahPokok;
+            $totalBayarKas = $jumlahPokok;
 
             if (bccomp($jumlahBunga, '0', 2) > 0) {
                 $coaBunga = CoaAccount::where('kode_akun', '56')->firstOrFail();
                 $lines[] = ['coa_account_id' => $coaBunga->id, 'debit' => $jumlahBunga, 'kredit' => 0];
-                $totalBayar = bcadd($jumlahPokok, $jumlahBunga, 2);
+                $totalBayarKas = bcadd($jumlahPokok, $jumlahBunga, 2);
             }
 
-            $lines[] = ['coa_account_id' => $coaKasBank->id, 'debit' => 0, 'kredit' => $totalBayar];
+            if (bccomp($diskon, '0', 2) > 0) {
+                $coaPotongan = CoaAccount::where('kode_akun', '511')->firstOrFail();
+                $lines[] = ['coa_account_id' => $coaPotongan->id, 'debit' => 0, 'kredit' => $diskon];
+            }
+
+            $lines[] = ['coa_account_id' => $coaKasBank->id, 'debit' => 0, 'kredit' => $totalBayarKas];
 
             $entry = $this->journalService->create([
                 'tanggal' => $data['tanggal_bayar'],
@@ -113,7 +144,7 @@ class PayableService
                 'journal_entry_id' => $entry->id,
             ]);
 
-            $sisaBaru = bcsub((string) $payable->sisa_hutang, $jumlahPokok, 2);
+            $sisaBaru = bcsub((string) $payable->sisa_hutang, $totalPengurangHutang, 2);
 
             $payable->update([
                 'sisa_hutang' => $sisaBaru,

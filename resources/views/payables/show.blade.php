@@ -76,6 +76,14 @@
                             <option value="{{ $coa->id }}">{{ $coa->kode_akun }} — {{ $coa->nama_akun }}</option>
                         @endforeach
                     </select>
+                    @if ($payable->termin_diskon_persen)
+                        <label class="flex items-center gap-2 text-xs text-slate-600">
+                            <input type="checkbox" name="terapkan_diskon_tunai" value="1"
+                                class="rounded border-slate-300">
+                            Terapkan diskon tunai {{ $payable->termin_diskon_persen }}% (berlaku jika dibayar dalam
+                            {{ $payable->termin_diskon_hari }} hari sejak {{ $payable->tanggal->format('d M Y') }})
+                        </label>
+                    @endif
                     <button type="submit"
                         class="w-full py-2 rounded-lg bg-success text-white text-sm font-medium shadow-sm">
                         Simpan Pembayaran
