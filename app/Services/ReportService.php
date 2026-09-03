@@ -379,4 +379,119 @@ class ReportService
             'is_balanced' => bccomp($totalAset, $totalKewajibanEkuitas, 2) === 0,
         ];
     }
+
+    public function equityChangeStatement(FiscalPeriod $fiscalPeriod): array
+    {
+        $sebelumTanggal = $fiscalPeriod->tanggal_mulai->toDateString();
+
+        $modalPemilikAwal = $this->balanceAsOfBeforeDate('31', $sebelumTanggal);
+        $labaDitahanAwal = $this->balanceAsOfBeforeDate('33', $sebelumTanggal);
+        $priveAwal = $this->balanceAsOfBeforeDate('32', $sebelumTanggal);
+
+        $modalAwalPeriode = bcsub(bcadd($modalPemilikAwal, $labaDitahanAwal, 2), $priveAwal, 2);
+
+        $labaBersihPeriode = $this->incomeStatement($fiscalPeriod)['laba_bersih_setelah_pajak'];
+        $privePeriode = $this->periodMovement('32', $fiscalPeriod);
+
+        $modalAkhirPeriode = bcsub(bcadd($modalAwalPeriode, $labaBersihPeriode, 2), $privePeriode, 2);
+
+        return [
+            'fiscal_period' => $fiscalPeriod,
+            'modal_awal_periode' => $modalAwalPeriode,
+            'laba_bersih_periode' => $labaBersihPeriode,
+            'prive_periode' => $privePeriode,
+            'modal_akhir_periode' => $modalAkhirPeriode,
+        ];
+    }
+
+    protected function balanceAsOfBeforeDate(string $kodeAkun, string $sebelumTanggal): string
+    {
+        $account = CoaAccount::where('kode_akun', $kodeAkun)->first();
+
+        if (!$account) {
+            return '0';
+        }
+
+        return $this->openingBalance($account, $sebelumTanggal);
+    }
+
+    public function cashFlowStatement(FiscalPeriod $fiscalPeriod): array
+    {
+        $tanggalAwal = $fiscalPeriod->tanggal_mulai->toDateString();
+        $tanggalAkhir = $fiscalPeriod->tanggal_selesai->toDateString();
+
+        $labaBersih = $this->incomeStatement($fiscalPeriod)['laba_bersih_setelah_pajak'];
+        $bebanPenyusutan = $this->periodMovement('54', $fiscalPeriod);
+
+        $piutangAwal = $this->balanceAsOfBeforeDate('113', $tanggalAwal);
+        $piutangAkhir = $this->balanceAsOfByKode('113', $tanggalAkhir);
+        $perubahanPiutang = bcsub($piutangAkhir, $piutangAwal, 2);
+
+        $persediaanDagangAwal = $this->balanceAsOfBeforeDate('115', $tanggalAwal);
+        $persediaanKonsinyasiAwal = $this->balanceAsOfBeforeDate('116', $tanggalAwal);
+        $persediaanAwal = bcadd($persediaanDagangAwal, $persediaanKonsinyasiAwal, 2);
+
+        $persediaanDagangAkhir = $this->balanceAsOfByKode('115', $tanggalAkhir);
+        $persediaanKonsinyasiAkhir = $this->balanceAsOfByKode('116', $tanggalAkhir);
+        $persediaanAkhir = bcadd($persediaanDagangAkhir, $persediaanKonsinyasiAkhir, 2);
+
+        $perubahanPersediaan = bcsub($persediaanAkhir, $persediaanAwal, 2);
+
+        $hutangUsahaAwal = $this->balanceAsOfBeforeDate('211', $tanggalAwal);
+        $hutangUsahaAkhir = $this->balanceAsOfByKode('211', $tanggalAkhir);
+        $perubahanHutangUsaha = bcsub($hutangUsahaAkhir, $hutangUsahaAwal, 2);
+
+        $kasBersihOperasi = bcsub(
+            bcadd(
+                bcadd($labaBersih, $bebanPenyusutan, 2),
+                $perubahanHutangUsaha,
+                2
+            ),
+            bcadd($perubahanPiutang, $perubahanPersediaan, 2),
+            2
+        );
+
+        $pembelianAsetTetap = (string) \App\Models\FixedAsset::whereBetween('tanggal_perolehan', [$tanggalAwal, $tanggalAkhir])->sum('harga_perolehan');
+        $penjualanAsetTetap = (string) \App\Models\FixedAsset::whereBetween('tanggal_pelepasan', [$tanggalAwal, $tanggalAkhir])->sum('harga_jual_pelepasan');
+
+        $kasBersihInvestasi = bcsub($penjualanAsetTetap, $pembelianAsetTetap, 2);
+
+        $penerimaanPinjaman = (string) \App\Models\Payable::where('jenis', 'pinjaman')
+            ->whereBetween('tanggal', [$tanggalAwal, $tanggalAkhir])
+            ->sum('total_hutang');
+
+        $pembayaranPokokPinjaman = (string) \App\Models\PayablePayment::join('payables', 'payables.id', '=', 'payable_payments.payable_id')
+            ->where('payables.jenis', 'pinjaman')
+            ->whereBetween('payable_payments.tanggal_bayar', [$tanggalAwal, $tanggalAkhir])
+            ->sum('payable_payments.jumlah_pokok');
+
+        $prive = $this->periodMovement('32', $fiscalPeriod);
+
+        $kasBersihPendanaan = bcsub(bcsub($penerimaanPinjaman, $pembayaranPokokPinjaman, 2), $prive, 2);
+
+        $kenaikanPenurunanKasBersih = bcadd(bcadd($kasBersihOperasi, $kasBersihInvestasi, 2), $kasBersihPendanaan, 2);
+
+        $kasBankAwal = bcadd($this->balanceAsOfBeforeDate('111', $tanggalAwal), $this->balanceAsOfBeforeDate('112', $tanggalAwal), 2);
+        $kasBankAkhir = bcadd($kasBankAwal, $kenaikanPenurunanKasBersih, 2);
+
+        return [
+            'fiscal_period' => $fiscalPeriod,
+            'laba_bersih' => $labaBersih,
+            'beban_penyusutan' => $bebanPenyusutan,
+            'perubahan_piutang' => $perubahanPiutang,
+            'perubahan_persediaan' => $perubahanPersediaan,
+            'perubahan_hutang_usaha' => $perubahanHutangUsaha,
+            'kas_bersih_operasi' => $kasBersihOperasi,
+            'pembelian_aset_tetap' => $pembelianAsetTetap,
+            'penjualan_aset_tetap' => $penjualanAsetTetap,
+            'kas_bersih_investasi' => $kasBersihInvestasi,
+            'penerimaan_pinjaman' => $penerimaanPinjaman,
+            'pembayaran_pokok_pinjaman' => $pembayaranPokokPinjaman,
+            'prive' => $prive,
+            'kas_bersih_pendanaan' => $kasBersihPendanaan,
+            'kenaikan_penurunan_kas_bersih' => $kenaikanPenurunanKasBersih,
+            'saldo_kas_awal' => $kasBankAwal,
+            'saldo_kas_akhir' => $kasBankAkhir,
+        ];
+    }
 }
