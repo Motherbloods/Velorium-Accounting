@@ -7,6 +7,7 @@ use App\Http\Controllers\BalanceSheetController;
 use App\Http\Controllers\BankAccountController;
 use App\Http\Controllers\BankReconciliationController;
 use App\Http\Controllers\BranchController;
+use App\Http\Controllers\CashFlowController;
 use App\Http\Controllers\CashTransactionController;
 use App\Http\Controllers\CoaAccountController;
 use App\Http\Controllers\ConsigneeController;
@@ -15,6 +16,7 @@ use App\Http\Controllers\ConsignmentSalesReportController;
 use App\Http\Controllers\ConsignmentShipmentController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\EquityChangeController;
 use App\Http\Controllers\FiscalPeriodController;
 use App\Http\Controllers\FixedAssetController;
 use App\Http\Controllers\GeneralLedgerController;
@@ -179,6 +181,10 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/reports/income-statement', [IncomeStatementController::class, 'index'])->name('reports.income-statement');
         Route::get('/reports/balance-sheet', [BalanceSheetController::class, 'index'])->name('reports.balance-sheet');
+
+        Route::get('/reports/equity-change', [EquityChangeController::class, 'index'])->name('reports.equity-change');
+        Route::get('/reports/cash-flow', [CashFlowController::class, 'index'])->name('reports.cash-flow');
+
     });
 });
 

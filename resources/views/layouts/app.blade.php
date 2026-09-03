@@ -177,6 +177,17 @@
                             <i data-lucide="landmark" class="w-4 h-4"></i>
                             Neraca
                         </a>
+
+                        <a href="{{ route('reports.equity-change') }}"
+                            class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('reports.equity-change') ? 'bg-blue-50 text-primary' : 'text-text hover:bg-slate-50' }}">
+                            <i data-lucide="pie-chart" class="w-4 h-4"></i>
+                            Perubahan Modal
+                        </a>
+                        <a href="{{ route('reports.cash-flow') }}"
+                            class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('reports.cash-flow') ? 'bg-blue-50 text-primary' : 'text-text hover:bg-slate-50' }}">
+                            <i data-lucide="waves" class="w-4 h-4"></i>
+                            Arus Kas
+                        </a>
                     @endif
                     @if (auth()->user()->hasRole('admin', 'staff_konsinyasi'))
                         <p class="px-3 pt-4 pb-1 text-xs font-semibold text-slate-400 uppercase">Konsinyasi</p>
