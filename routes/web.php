@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdjustingEntryController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\BankAccountController;
@@ -160,6 +161,19 @@ Route::middleware('auth')->group(function () {
         Route::get('/fixed-assets/{fixedAsset}', [FixedAssetController::class, 'show'])->name('fixed-assets.show');
         Route::post('/fixed-assets/{fixedAsset}/run-depreciation', [FixedAssetController::class, 'runDepreciation'])->name('fixed-assets.run-depreciation');
         Route::post('/fixed-assets/{fixedAsset}/dispose', [FixedAssetController::class, 'dispose'])->name('fixed-assets.dispose');
+
+        Route::get('/adjusting-entries', [AdjustingEntryController::class, 'index'])->name('adjusting-entries.index');
+        Route::get('/adjusting-entries/prepaid/create', [AdjustingEntryController::class, 'createPrepaid'])->name('adjusting-entries.prepaid.create');
+        Route::post('/adjusting-entries/prepaid', [AdjustingEntryController::class, 'storePrepaid'])->name('adjusting-entries.prepaid.store');
+        Route::post('/adjusting-entries/prepaid/{prepaidExpense}/run', [AdjustingEntryController::class, 'runPrepaid'])->name('adjusting-entries.prepaid.run');
+
+        Route::get('/adjusting-entries/unearned/create', [AdjustingEntryController::class, 'createUnearned'])->name('adjusting-entries.unearned.create');
+        Route::post('/adjusting-entries/unearned', [AdjustingEntryController::class, 'storeUnearned'])->name('adjusting-entries.unearned.store');
+        Route::post('/adjusting-entries/unearned/{unearnedRevenue}/run', [AdjustingEntryController::class, 'runUnearned'])->name('adjusting-entries.unearned.run');
+
+        Route::get('/adjusting-entries/accrued/create', [AdjustingEntryController::class, 'createAccrued'])->name('adjusting-entries.accrued.create');
+        Route::post('/adjusting-entries/accrued/expense', [AdjustingEntryController::class, 'storeAccruedExpense'])->name('adjusting-entries.accrued.expense.store');
+        Route::post('/adjusting-entries/accrued/revenue', [AdjustingEntryController::class, 'storeAccruedRevenue'])->name('adjusting-entries.accrued.revenue.store');
     });
 });
 
