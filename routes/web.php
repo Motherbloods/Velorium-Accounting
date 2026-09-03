@@ -10,6 +10,7 @@ use App\Http\Controllers\BankReconciliationController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\CashFlowController;
 use App\Http\Controllers\CashTransactionController;
+use App\Http\Controllers\ClosingPeriodController;
 use App\Http\Controllers\CoaAccountController;
 use App\Http\Controllers\ConsigneeController;
 use App\Http\Controllers\ConsignmentReturnController;
@@ -201,6 +202,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/financial-report-export', [FinancialReportExportController::class, 'index'])->name('financial-report-export.index');
         Route::get('/financial-report-export/{fiscalPeriod}/pdf', [FinancialReportExportController::class, 'pdf'])->name('financial-report-export.pdf');
         Route::get('/financial-report-export/{fiscalPeriod}/excel', [FinancialReportExportController::class, 'excel'])->name('financial-report-export.excel');
+
+        Route::get('/closing-periods', [ClosingPeriodController::class, 'index'])->name('closing-periods.index');
+        Route::post('/closing-periods', [ClosingPeriodController::class, 'store'])->name('closing-periods.store');
+        Route::post('/closing-periods/{closingPeriod}/finalize', [ClosingPeriodController::class, 'finalize'])->name('closing-periods.finalize');
     });
 });
 
