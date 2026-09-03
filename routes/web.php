@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdjustingEntryController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\BalanceSheetController;
 use App\Http\Controllers\BankAccountController;
 use App\Http\Controllers\BankReconciliationController;
 use App\Http\Controllers\BranchController;
@@ -17,6 +18,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FiscalPeriodController;
 use App\Http\Controllers\FixedAssetController;
 use App\Http\Controllers\GeneralLedgerController;
+use App\Http\Controllers\IncomeStatementController;
 use App\Http\Controllers\JournalEntryController;
 use App\Http\Controllers\PayableController;
 use App\Http\Controllers\ProductController;
@@ -174,6 +176,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/adjusting-entries/accrued/create', [AdjustingEntryController::class, 'createAccrued'])->name('adjusting-entries.accrued.create');
         Route::post('/adjusting-entries/accrued/expense', [AdjustingEntryController::class, 'storeAccruedExpense'])->name('adjusting-entries.accrued.expense.store');
         Route::post('/adjusting-entries/accrued/revenue', [AdjustingEntryController::class, 'storeAccruedRevenue'])->name('adjusting-entries.accrued.revenue.store');
+
+        Route::get('/reports/income-statement', [IncomeStatementController::class, 'index'])->name('reports.income-statement');
+        Route::get('/reports/balance-sheet', [BalanceSheetController::class, 'index'])->name('reports.balance-sheet');
     });
 });
 

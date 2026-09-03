@@ -166,6 +166,17 @@
                             <i data-lucide="scale" class="w-4 h-4"></i>
                             Neraca Saldo
                         </a>
+
+                        <a href="{{ route('reports.income-statement') }}"
+                            class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('reports.income-statement') ? 'bg-blue-50 text-primary' : 'text-text hover:bg-slate-50' }}">
+                            <i data-lucide="trending-up" class="w-4 h-4"></i>
+                            Laba Rugi
+                        </a>
+                        <a href="{{ route('reports.balance-sheet') }}"
+                            class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('reports.balance-sheet') ? 'bg-blue-50 text-primary' : 'text-text hover:bg-slate-50' }}">
+                            <i data-lucide="landmark" class="w-4 h-4"></i>
+                            Neraca
+                        </a>
                     @endif
                     @if (auth()->user()->hasRole('admin', 'staff_konsinyasi'))
                         <p class="px-3 pt-4 pb-1 text-xs font-semibold text-slate-400 uppercase">Konsinyasi</p>
