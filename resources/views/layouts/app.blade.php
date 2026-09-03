@@ -193,6 +193,17 @@
                             <i data-lucide="gauge" class="w-4 h-4"></i>
                             Rasio Keuangan
                         </a>
+
+                        <a href="{{ route('financial-notes.index') }}"
+                            class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('financial-notes.*') ? 'bg-blue-50 text-primary' : 'text-text hover:bg-slate-50' }}">
+                            <i data-lucide="notebook-text" class="w-4 h-4"></i>
+                            CALK
+                        </a>
+                        <a href="{{ route('financial-report-export.index') }}"
+                            class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('financial-report-export.*') ? 'bg-blue-50 text-primary' : 'text-text hover:bg-slate-50' }}">
+                            <i data-lucide="download" class="w-4 h-4"></i>
+                            Ekspor Laporan Lengkap
+                        </a>
                     @endif
                     @if (auth()->user()->hasRole('admin', 'staff_konsinyasi'))
                         <p class="px-3 pt-4 pb-1 text-xs font-semibold text-slate-400 uppercase">Konsinyasi</p>

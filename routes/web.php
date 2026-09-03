@@ -17,7 +17,9 @@ use App\Http\Controllers\ConsignmentShipmentController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EquityChangeController;
+use App\Http\Controllers\FinancialNoteController;
 use App\Http\Controllers\FinancialRatioController;
+use App\Http\Controllers\FinancialReportExportController;
 use App\Http\Controllers\FiscalPeriodController;
 use App\Http\Controllers\FixedAssetController;
 use App\Http\Controllers\GeneralLedgerController;
@@ -187,6 +189,13 @@ Route::middleware('auth')->group(function () {
         Route::get('/reports/cash-flow', [CashFlowController::class, 'index'])->name('reports.cash-flow');
 
         Route::get('/reports/financial-ratios', [FinancialRatioController::class, 'index'])->name('reports.financial-ratios');
+
+        Route::get('/financial-notes', [FinancialNoteController::class, 'index'])->name('financial-notes.index');
+        Route::post('/financial-notes', [FinancialNoteController::class, 'store'])->name('financial-notes.store');
+
+        Route::get('/financial-report-export', [FinancialReportExportController::class, 'index'])->name('financial-report-export.index');
+        Route::get('/financial-report-export/{fiscalPeriod}/pdf', [FinancialReportExportController::class, 'pdf'])->name('financial-report-export.pdf');
+        Route::get('/financial-report-export/{fiscalPeriod}/excel', [FinancialReportExportController::class, 'excel'])->name('financial-report-export.excel');
     });
 });
 
