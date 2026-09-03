@@ -494,4 +494,66 @@ class ReportService
             'saldo_kas_akhir' => $kasBankAkhir,
         ];
     }
+
+    public function financialRatios(FiscalPeriod $fiscalPeriod, ?FiscalPeriod $periodeSebelumnya = null): array
+    {
+        $labaRugi = $this->incomeStatement($fiscalPeriod);
+        $neraca = $this->balanceSheet($fiscalPeriod);
+
+        $currentRatio = $this->safeDivide($neraca['total_aset_lancar'], $neraca['total_kewajiban_pendek']);
+
+        $persediaanTotal = bcadd($neraca['persediaan_dagang'], $neraca['persediaan_konsinyasi'], 2);
+        $quickRatio = $this->safeDivide(bcsub($neraca['total_aset_lancar'], $persediaanTotal, 2), $neraca['total_kewajiban_pendek']);
+
+        $penjualan = $labaRugi['pendapatan_penjualan_bersih'];
+
+        $grossProfitMargin = $this->safeDivide(bcmul($labaRugi['laba_kotor'], '100', 2), $penjualan);
+        $netProfitMargin = $this->safeDivide(bcmul($labaRugi['laba_bersih_setelah_pajak'], '100', 2), $penjualan);
+        $roa = $this->safeDivide(bcmul($labaRugi['laba_bersih_setelah_pajak'], '100', 2), $neraca['total_aset']);
+        $roe = $this->safeDivide(bcmul($labaRugi['laba_bersih_setelah_pajak'], '100', 2), $neraca['total_ekuitas']);
+
+        $debtToEquity = $this->safeDivide($neraca['total_kewajiban'], $neraca['total_ekuitas']);
+        $debtToAsset = $this->safeDivide($neraca['total_kewajiban'], $neraca['total_aset']);
+
+        $persediaanAwal = $periodeSebelumnya
+            ? bcadd(
+                $this->balanceAsOfByKode('115', $periodeSebelumnya->tanggal_selesai->toDateString()),
+                $this->balanceAsOfByKode('116', $periodeSebelumnya->tanggal_selesai->toDateString()),
+                2
+            )
+            : $persediaanTotal;
+
+        $rataRataPersediaan = bcdiv(bcadd($persediaanAwal, $persediaanTotal, 2), '2', 2);
+        $inventoryTurnover = $this->safeDivide($labaRugi['hpp_bersih'], $rataRataPersediaan);
+
+        $piutangAwal = $periodeSebelumnya
+            ? $this->balanceAsOfByKode('113', $periodeSebelumnya->tanggal_selesai->toDateString())
+            : $neraca['piutang_usaha'];
+
+        $rataRataPiutang = bcdiv(bcadd($piutangAwal, $neraca['piutang_usaha'], 2), '2', 2);
+        $receivableTurnover = $this->safeDivide($penjualan, $rataRataPiutang);
+
+        return [
+            'fiscal_period' => $fiscalPeriod,
+            'current_ratio' => $currentRatio,
+            'quick_ratio' => $quickRatio,
+            'gross_profit_margin' => $grossProfitMargin,
+            'net_profit_margin' => $netProfitMargin,
+            'roa' => $roa,
+            'roe' => $roe,
+            'debt_to_equity' => $debtToEquity,
+            'debt_to_asset' => $debtToAsset,
+            'inventory_turnover' => $inventoryTurnover,
+            'receivable_turnover' => $receivableTurnover,
+        ];
+    }
+
+    protected function safeDivide(string $pembilang, string $penyebut): ?string
+    {
+        if (bccomp($penyebut, '0', 4) === 0) {
+            return null;
+        }
+
+        return bcdiv($pembilang, $penyebut, 2);
+    }
 }
