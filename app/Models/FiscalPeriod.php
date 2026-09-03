@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Traits\Auditable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class FiscalPeriod extends Model
 {
@@ -28,6 +29,11 @@ class FiscalPeriod extends Model
     public function journalEntries(): HasMany
     {
         return $this->hasMany(JournalEntry::class);
+    }
+
+    public function closingPeriod(): HasOne
+    {
+        return $this->hasOne(ClosingPeriod::class);
     }
 
     public function isOpen(): bool

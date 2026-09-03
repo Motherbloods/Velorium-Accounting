@@ -204,6 +204,11 @@
                             <i data-lucide="download" class="w-4 h-4"></i>
                             Ekspor Laporan Lengkap
                         </a>
+                        <a href="{{ route('closing-periods.index') }}"
+                            class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('closing-periods.*') ? 'bg-blue-50 text-primary' : 'text-text hover:bg-slate-50' }}">
+                            <i data-lucide="lock" class="w-4 h-4"></i>
+                            Tutup Buku
+                        </a>
                     @endif
                     @if (auth()->user()->hasRole('admin', 'staff_konsinyasi'))
                         <p class="px-3 pt-4 pb-1 text-xs font-semibold text-slate-400 uppercase">Konsinyasi</p>
