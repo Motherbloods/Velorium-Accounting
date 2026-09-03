@@ -218,6 +218,14 @@
                             Consignee
                         </a>
                     @endif
+                    @if (auth()->user()->hasRole('admin'))
+                        <p class="px-3 pt-4 pb-1 text-xs font-semibold text-slate-400 uppercase">Sistem</p>
+                        <a href="{{ route('audit-logs.index') }}"
+                            class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('audit-logs.*') ? 'bg-blue-50 text-primary' : 'text-text hover:bg-slate-50' }}">
+                            <i data-lucide="shield-check" class="w-4 h-4"></i>
+                            Audit Log
+                        </a>
+                    @endif
                     @yield('nav-extra')
                 </nav>
                 <div class="px-3 py-4 border-t border-slate-200 shrink-0">
