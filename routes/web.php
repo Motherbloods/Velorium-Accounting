@@ -17,6 +17,7 @@ use App\Http\Controllers\ConsignmentShipmentController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EquityChangeController;
+use App\Http\Controllers\FinancialRatioController;
 use App\Http\Controllers\FiscalPeriodController;
 use App\Http\Controllers\FixedAssetController;
 use App\Http\Controllers\GeneralLedgerController;
@@ -185,6 +186,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/reports/equity-change', [EquityChangeController::class, 'index'])->name('reports.equity-change');
         Route::get('/reports/cash-flow', [CashFlowController::class, 'index'])->name('reports.cash-flow');
 
+        Route::get('/reports/financial-ratios', [FinancialRatioController::class, 'index'])->name('reports.financial-ratios');
     });
 });
 

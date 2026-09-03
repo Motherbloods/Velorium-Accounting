@@ -188,6 +188,11 @@
                             <i data-lucide="waves" class="w-4 h-4"></i>
                             Arus Kas
                         </a>
+                        <a href="{{ route('reports.financial-ratios') }}"
+                            class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('reports.financial-ratios') ? 'bg-blue-50 text-primary' : 'text-text hover:bg-slate-50' }}">
+                            <i data-lucide="gauge" class="w-4 h-4"></i>
+                            Rasio Keuangan
+                        </a>
                     @endif
                     @if (auth()->user()->hasRole('admin', 'staff_konsinyasi'))
                         <p class="px-3 pt-4 pb-1 text-xs font-semibold text-slate-400 uppercase">Konsinyasi</p>
