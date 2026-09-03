@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdjustingEntryController;
+use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\BalanceSheetController;
@@ -48,6 +49,10 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    Route::middleware('role:admin')->group(function () {
+        Route::get('/audit-logs', [AuditLogController::class, 'index'])->name('audit-logs.index');
+    });
 
     Route::middleware('role:admin,staff_konsinyasi')->group(function () {
         Route::get('/consignees', [ConsigneeController::class, 'index'])->name('consignees.index');
